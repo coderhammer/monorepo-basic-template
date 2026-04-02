@@ -1,9 +1,35 @@
 import { Hono } from "hono";
-import { openAPIRouteHandler } from "hono-openapi";
+import { openAPIRouteHandler, describeRoute, resolver } from "hono-openapi";
+import { Scalar } from "@scalar/hono-api-reference";
+import z from "zod";
 
 const app = new Hono();
 
-app.get("/health", (c) => c.text("ok"));
+app.get(
+  "/health",
+  describeRoute({
+    responses: {
+      200: {
+        description: "Health endpoint",
+        content: {
+          "application/json": {
+            schema: resolver(
+              z.object({
+                status: z.string(),
+              }),
+            ),
+          },
+        },
+      },
+    },
+  }),
+  (c) =>
+    c.json({
+      status: "ok",
+    }),
+);
+
+app.get("/reference", Scalar({ url: "/api/openapi" }));
 
 app.get(
   "/openapi",
@@ -14,7 +40,7 @@ app.get(
         version: "1.0.0",
         description: "Greeting API",
       },
-      servers: [{ url: "http://localhost:3000", description: "Local Server" }],
+      servers: [{ url: "/api", description: "Local Server" }],
     },
   }),
 );
