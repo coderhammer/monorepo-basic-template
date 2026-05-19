@@ -26,13 +26,26 @@ services:
       - "traefik.http.routers.app.priority=1"
       - "traefik.http.services.app.loadbalancer.server.port=3000"
 
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: app
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
   api:
     image: node:24
-    working_dir: /workspace
-    command: npm run dev -w packages/api
+    working_dir: /workspace/packages/api
+    command: npm run dev
     volumes:
       - .:/workspace
     env_file: ./packages/api/.env.local
+    depends_on:
+      - postgres
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.api.entrypoints=web"
@@ -41,3 +54,22 @@ services:
       - "traefik.http.middlewares.api-strip.stripprefix.prefixes=/api"
       - "traefik.http.routers.api.middlewares=api-strip"
       - "traefik.http.services.api.loadbalancer.server.port=3000"
+
+  dbgate:
+    image: dbgate/dbgate
+    ports:
+      - "1212:3000"
+    environment:
+      CONNECTIONS: postgres
+      LABEL_postgres: PostgreSQL
+      ENGINE_postgres: postgres@dbgate-plugin-postgres
+      SERVER_postgres: postgres
+      PORT_postgres: 5432
+      USER_postgres: postgres
+      PASSWORD_postgres: postgres
+      DATABASE_postgres: app
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:

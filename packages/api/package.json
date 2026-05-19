@@ -2,13 +2,21 @@
   "name": "@monorepo/api",
   "private": true,
   "scripts": {
-    "dev": "tsx watch src/server.ts"
+    "dev": "tsx watch src/server.ts",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
     "@hono/node-server": "^1.19.12",
     "@hono/standard-validator": "^0.2.2",
     "@scalar/hono-api-reference": "^0.10.5",
+    "drizzle-orm": "^0.44.0",
     "hono": "^4.12.9",
-    "hono-openapi": "^1.3.0"
+    "hono-openapi": "^1.3.0",
+    "postgres": "^3.4.5"
+  },
+  "devDependencies": {
+    "drizzle-kit": "^0.31.0"
   }
 }
