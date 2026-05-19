@@ -1,9 +1,23 @@
 import { Hono } from "hono";
+import { cors } from "hono/cors";
 import { openAPIRouteHandler, describeRoute, resolver } from "hono-openapi";
 import { Scalar } from "@scalar/hono-api-reference";
 import z from "zod";
+import { auth } from "./auth.js";
 
 const app = new Hono();
+
+app.use(
+  "/auth/*",
+  cors({
+    origin: process.env.FRONTEND_URL ?? "http://localhost:3000",
+    allowHeaders: ["Content-Type", "Authorization"],
+    allowMethods: ["POST", "GET", "OPTIONS"],
+    credentials: true,
+  }),
+);
+
+app.on(["POST", "GET"], "/auth/*", (c) => auth.handler(c.req.raw));
 
 app.get(
   "/health",

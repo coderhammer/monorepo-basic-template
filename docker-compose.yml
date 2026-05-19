@@ -20,6 +20,8 @@ services:
     volumes:
       - .:/workspace
     env_file: ./packages/app/.env.local
+    environment:
+      WORKER_SLUG: "${WORKER_SLUG}"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.app.entrypoints=web"
@@ -46,6 +48,8 @@ services:
     volumes:
       - .:/workspace
     env_file: ./packages/api/.env.local
+    environment:
+      WORKER_SLUG: "${WORKER_SLUG}"
     depends_on:
       - postgres
     labels:

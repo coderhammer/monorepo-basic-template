@@ -8,12 +8,6 @@ import {
   uniqueIndex,
 } from "drizzle-orm/pg-core";
 
-export const kvTable = pgTable("kv", {
-  key: text("id").primaryKey(),
-  value: text("value").notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-});
-
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
