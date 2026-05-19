@@ -14,6 +14,7 @@ services:
 
   app:
     image: node:24
+    user: "1001:1001"
     working_dir: /workspace/packages/app
     command: npm run dev
     volumes:
@@ -39,6 +40,7 @@ services:
 
   api:
     image: node:24
+    user: "1001:1001"
     working_dir: /workspace/packages/api
     command: npm run dev
     volumes:
